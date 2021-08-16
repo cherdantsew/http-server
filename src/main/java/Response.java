@@ -12,6 +12,7 @@ public class Response {
     private final Map<String, String> headers = new HashMap<>();
     private byte[] body = null;
 
+    public static final String HTTP_1_1_PROTOCOL = "HTTP/1.1";
     public static final int RC_OK = 200;
     public static final int RC_NOT_FOUND = 404;
     public static final int RC_METHOD_NOT_ALLOWED = 405;
@@ -19,7 +20,10 @@ public class Response {
     public static final String RM_FILE_NOT_FOUND = "FILE NOT FOUND ON THE SERVER";
     public static final String RM_METHOD_NOT_ALLOWED = "THIS METHOD IS NOT ALLOWED";
 
-    public Response() {
+    public Response(String protocolVersion, int statusCode, String statusMessage) {
+        this.protocolVersion = protocolVersion;
+        this.statusCode = statusCode;
+        this.statusMessage = statusMessage;
     }
 
     public void addHeader(String name, String value) {

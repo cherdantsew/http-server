@@ -4,11 +4,11 @@ import java.net.Socket;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        ServerSocket ss = new ServerSocket(8080);
+        ServerSocket serverSocket = new ServerSocket(8080);
         while (true) {
-            Socket s = ss.accept();
+            Socket clientSocket = serverSocket.accept();
             System.err.println("Client accepted");
-            ClientRequestHandler clientRequestHandler = new ClientRequestHandler(s);
+            ClientRequestHandler clientRequestHandler = new ClientRequestHandler(clientSocket);
             new Thread(clientRequestHandler).start();
         }
     }
