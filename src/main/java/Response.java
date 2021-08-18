@@ -1,14 +1,11 @@
-import lombok.Data;
-
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
 public class Response {
 
-    private String protocolVersion;
-    private int statusCode;
-    private String statusMessage;
+    private final String protocolVersion;
+    private final int statusCode;
+    private final String statusMessage;
 
     private final Map<String, String> headers = new HashMap<>();
     private byte[] body = null;
@@ -55,5 +52,17 @@ public class Response {
         }
         response.append("\r\n");
         return response.toString();
+    }
+
+    public String getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
     }
 }
