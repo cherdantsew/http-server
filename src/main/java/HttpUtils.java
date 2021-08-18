@@ -3,11 +3,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpUtils {
+
+    private static final Logger logger = Logger.getLogger(HttpUtils.class.getName());
+
     public static Request readRequestFromInputStream(InputStream inputStream) {
         try {
-            ArrayList<String> clientRequestList = new ArrayList<>();
+            List<String> clientRequestList = new ArrayList<>();
             Request request = new Request();
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
             readRequestLines(clientRequestList, in);
@@ -15,8 +20,7 @@ public class HttpUtils {
             formRequestHeaders(clientRequestList, request);
             return request;
         } catch (Exception e) {
-            System.err.println("Error while parsing request.");
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Error while reading request from input stream.", e);
         }
         return null;
     }
@@ -39,14 +43,14 @@ public class HttpUtils {
         outputStream.flush();
     }
 
-    private static void formRequestStatusLine(ArrayList<String> clientRequestList, Request request) {
+    private static void formRequestStatusLine(List<String> clientRequestList, Request request) {
         String[] statusLineArray = clientRequestList.get(0).split(" ");
         request.setMethod(statusLineArray[0]);
         request.setResource(statusLineArray[1]);
         request.setProtocolVersion(statusLineArray[2]);
     }
 
-    private static void formRequestHeaders(ArrayList<String> clientRequestList, Request request) {
+    private static void formRequestHeaders(List<String> clientRequestList, Request request) {
         for (int i = 1; i < clientRequestList.size(); i++) {
             String headerLine = clientRequestList.get(i);
             String headerName = headerLine.split(":", 2)[0];
@@ -59,11 +63,10 @@ public class HttpUtils {
         }
     }
 
-    private static void readRequestLines(ArrayList<String> clientRequestList, BufferedReader in) throws IOException {
+    private static void readRequestLines(List<String> clientRequestList, BufferedReader in) throws IOException {
         while (true) {
             String currentString = in.readLine();
             if (currentString == null || currentString.trim().length() == 0) {
-                System.err.println("have read all request");
                 break;
             }
             clientRequestList.add(currentString);

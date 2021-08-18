@@ -1,10 +1,14 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientRequestHandler implements Runnable {
     private final Socket socket;
     private final InputStream inputStream;
     private final OutputStream outputStream;
+
+    private static final Logger logger = Logger.getLogger(ClientRequestHandler.class.getName());
 
     public ClientRequestHandler(Socket socket) throws IOException {
         this.socket = socket;
@@ -19,24 +23,18 @@ public class ClientRequestHandler implements Runnable {
             File requestedFile = getFile(request);
             Response response = HttpUtils.getResponse(request, requestedFile);
             HttpUtils.writeResponse(response, outputStream);
+            socket.close();
+            logger.log(Level.INFO, "Client processing finished.");
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            logger.log(Level.WARNING, "Error occurred while trying to write response/getting response object.", e);
         }
-        System.err.println("Client processing finished");
     }
 
     private static File getFile(Request request) {
         String requestedResourcePath = request.getResource().replace('/', '\\');
-        File requestedResource;
         if ("\\".equals(requestedResourcePath)) {
-            requestedResource = new File(ResourcesRepository.C_RESOURCES + ResourcesRepository.HOME_PAGE_ADDRESS);
-        } else requestedResource = new File(ResourcesRepository.C_RESOURCES + requestedResourcePath);
-        return requestedResource;
+             return new File(ResourcesRepository.C_RESOURCES + ResourcesRepository.HOME_PAGE_ADDRESS);
+        }
+        return new File(ResourcesRepository.C_RESOURCES + requestedResourcePath);
     }
 }
