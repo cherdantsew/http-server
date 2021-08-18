@@ -2,6 +2,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -10,16 +11,16 @@ public class Request {
     private String method;
     private String resource;
     private String protocolVersion;
-    private Map<String, ArrayList<String>> headers = new HashMap<>();
+    private Map<String, List<String>> headers = new HashMap<>();
 
     public void setHeader(String key, String value) {
         if (this.headers.containsKey(key)) {
-            ArrayList<String> values = this.headers.get(key);
+            List<String> values = this.headers.get(key);
             values.add(value);
             this.headers.put(key, values);
             return;
         }
-        ArrayList<String> valueList = new ArrayList<>();
+        List<String> valueList = new ArrayList<>();
         valueList.add(value);
         this.headers.put(key, valueList);
     }
