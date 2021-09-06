@@ -8,7 +8,7 @@ public class Request {
     private String method;
     private String resource;
     private String protocolVersion;
-    private Map<String, List<String>> headers = new HashMap<>();//
+    private final Map<String, List<String>> headers = new HashMap<>();
 
     public void setHeader(String key, String value) {
         if (this.headers.containsKey(key)) {

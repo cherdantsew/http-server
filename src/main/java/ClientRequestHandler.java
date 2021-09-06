@@ -20,6 +20,9 @@ public class ClientRequestHandler implements Runnable {
     public void run() {
         try {
             Request request = HttpUtils.readRequestFromInputStream(inputStream);
+            if (request == null){
+                return;
+            }
             File requestedFile = getFile(request);
             Response response = HttpUtils.getResponse(request, requestedFile);
             HttpUtils.writeResponse(response, outputStream);

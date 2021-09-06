@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 
 public class ResourcesRepository {
 
-    public static final String RESOURCES_PATH = "resources_path";
-    public static final String SERVER_CONFIG_PROPERTIES = "C:\\Users\\nvson\\IdeaProjects\\http-server\\config.properties";
+    private final String CONFIG_FILE_NAME = "\\config.properties";
+    private static final String RESOURCES_PATH = "resources_path";
+    private static final String JAR_PATH = System.getProperty("user.dir");
+
     public static final String C_RESOURCES = new ResourcesRepository().getProjectResourcesPath();
     public static final String HOME_PAGE_ADDRESS = "\\index.html";
     public static final String ERROR_404_PAGE_ADDRESS = "\\404error.html";
@@ -17,13 +19,22 @@ public class ResourcesRepository {
     private static final Logger logger = Logger.getLogger(ResourcesRepository.class.getName());
 
     public String getProjectResourcesPath() {
-        try (InputStream inputStream = new FileInputStream(SERVER_CONFIG_PROPERTIES)) {
+        try {
+            if (Main.pathToPropertyFile != null) {
+                return getResourcesPathProperty(Main.pathToPropertyFile);
+            }
+            return getResourcesPathProperty(JAR_PATH + CONFIG_FILE_NAME);
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Error while trying to read property file.", e);
+        }
+        return null;
+    }
+
+    private String getResourcesPathProperty(String fileName) throws IOException {
+        try (InputStream inputStream = new FileInputStream(fileName)) {
             Properties prop = new Properties();
             prop.load(inputStream);
             return prop.getProperty(RESOURCES_PATH);
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "Error while getting project resources path.", e);
         }
-        return null;
     }
 }
