@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 public class ResourcesRepository {
 
-    private final String CONFIG_FILE_NAME = "\\config.properties";
+
     private static final String RESOURCES_PATH = "resources_path";
     private static final String JAR_PATH = System.getProperty("user.dir");
 
@@ -20,21 +20,10 @@ public class ResourcesRepository {
 
     public String getProjectResourcesPath() {
         try {
-            if (Main.pathToPropertyFile != null) {
-                return getResourcesPathProperty(Main.pathToPropertyFile);
-            }
-            return getResourcesPathProperty(JAR_PATH + CONFIG_FILE_NAME);
+            return PropertyFileReader.getInstance().getProperty(RESOURCES_PATH);
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Error while trying to read property file.", e);
+            logger.log(Level.WARNING, "Couldnt find resources_path property in property file" , e);
         }
         return null;
-    }
-
-    private String getResourcesPathProperty(String fileName) throws IOException {
-        try (InputStream inputStream = new FileInputStream(fileName)) {
-            Properties prop = new Properties();
-            prop.load(inputStream);
-            return prop.getProperty(RESOURCES_PATH);
-        }
     }
 }

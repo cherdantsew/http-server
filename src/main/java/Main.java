@@ -6,12 +6,12 @@ import java.util.logging.Logger;
 
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    public static String pathToPropertyFile = null;
+    private static final int DEFAULT_PORT_NUMBER = 8080;
 
     public static void main(String[] args) throws IOException {
-        if (args.length > 0)
-            pathToPropertyFile = args[0];
-        ServerSocket serverSocket = new ServerSocket(8080);
+        PropertyFileReader propertyFileReader = PropertyFileReader.getInstance(args);
+        int port = Integer.parseInt(propertyFileReader.getProperty("port"));
+        ServerSocket serverSocket = new ServerSocket(port == 0 ? DEFAULT_PORT_NUMBER : port);
         while (true) {
             Socket clientSocket = serverSocket.accept();
             logger.log(Level.INFO, "Client accepted.");
