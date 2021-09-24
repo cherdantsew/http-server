@@ -36,7 +36,7 @@ public class ClientRequestHandler implements Runnable {
     private static File getFile(Request request) {
         String requestedResourcePath = request.getResource().replace('/', '\\');
         if ("\\".equals(requestedResourcePath)) {
-             return new File(ResourcesRepository.C_RESOURCES + ResourcesRepository.HOME_PAGE_ADDRESS);
+             return new File(ResourcesRepository.C_RESOURCES);
         }
         return new File(ResourcesRepository.C_RESOURCES + requestedResourcePath);
     }

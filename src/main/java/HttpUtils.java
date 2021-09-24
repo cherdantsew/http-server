@@ -28,12 +28,10 @@ public class HttpUtils {
     public static Response getResponse(Request request, File requestedFile) throws IOException {
         if ("GET".equals(request.getMethod())) {
             if (!requestedFile.isFile()) {
-                requestedFile = new File(ResourcesRepository.C_RESOURCES + ResourcesRepository.ERROR_404_PAGE_ADDRESS);
                 return formResponse(requestedFile, Response.RC_NOT_FOUND, Response.RM_FILE_NOT_FOUND);
             }
             return formResponse(requestedFile, Response.RC_OK, Response.RM_OK);
         }
-        requestedFile = new File(ResourcesRepository.C_RESOURCES + ResourcesRepository.ERROR_405_PAGE_ADDRESS);
         return formResponse(requestedFile, Response.RC_METHOD_NOT_ALLOWED, Response.RM_METHOD_NOT_ALLOWED);
     }
 
@@ -75,10 +73,17 @@ public class HttpUtils {
 
     private static Response formResponse(File requestedFile, int statusCode, String statusMessage) throws IOException {
         Response response = new Response(Response.HTTP_1_1_PROTOCOL, statusCode, statusMessage);
-        addBasicHeaders(requestedFile, response);
+        //If file not found
+        if (statusCode != Response.RC_OK) {
+            addBasicHeaders(requestedFile, response);
+            response.addBody(Response.RM_404_HTML_TEXT.getBytes());
+            return response;
+        }
+        //If image is requested
         if (requestedFile.getAbsolutePath().endsWith("png")) {
             return handleImageRequest(requestedFile, response);
         }
+        //If any other existing file is requested
         response.addBody(Files.readAllBytes(Paths.get(requestedFile.getAbsolutePath())));
         return response;
     }
@@ -86,7 +91,11 @@ public class HttpUtils {
     private static void addBasicHeaders(File requestedFile, Response response) {
         response.addHeader("Server", "VladServer/08.12.2021");
         response.addHeader("Content-Type", "text/html");
-        response.addHeader("Content-Length", String.valueOf(requestedFile.length()));
+        if (response.getStatusCode() == Response.RC_OK)
+            response.addHeader("Content-Length", String.valueOf(requestedFile.length()));
+        else if (response.getStatusCode() == Response.RC_NOT_FOUND)
+            response.addHeader("Content-Length", String.valueOf(Response.RM_404_HTML_TEXT.length()));
+        else response.addHeader("Content-Length", String.valueOf(Response.RM_405_HTML_TEXT.length()));
         response.addHeader("Connection", "close");
         response.addHeader("Allow", "GET");
     }

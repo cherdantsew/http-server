@@ -17,6 +17,8 @@ public class Response {
     public static final String RM_FILE_NOT_FOUND = "FILE NOT FOUND ON THE SERVER";
     public static final String RM_METHOD_NOT_ALLOWED = "THIS METHOD IS NOT ALLOWED";
     public static final String HTTP_1_1_PROTOCOL = "HTTP/1.1";
+    public static final String RM_404_HTML_TEXT = "<html><head>404 Error</head><body>file not found on the server</body></html>";
+    public static final String RM_405_HTML_TEXT = "<html><head>405 Error</head><body>method is not supported yet.</body></html>";
 
     public Response(String protocolVersion, int statusCode, String statusMessage) {
         this.protocolVersion = protocolVersion;
