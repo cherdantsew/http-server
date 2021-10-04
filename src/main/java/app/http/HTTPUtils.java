@@ -1,6 +1,6 @@
-package app.httpUtils;
+package app.http;
 
-public class HttpStatusLineUtils {
+public class HTTPUtils {
     public static final String METHOD_GET = "GET";
     public static final int RC_OK = 200;
     public static final int RC_NOT_FOUND = 404;

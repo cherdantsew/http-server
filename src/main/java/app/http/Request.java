@@ -1,4 +1,4 @@
-package app;
+package app.http;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,16 +24,6 @@ public class Request {
         this.headers.put(key, valueList);
     }
 
-    public String getHeader(String name) {
-        if (this.headers.containsKey(name))
-            return this.headers.get(name).get(0);
-        return null;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
     public void setMethod(String method) {
         this.method = method;
     }
@@ -44,10 +34,6 @@ public class Request {
 
     public void setResource(String resource) {
         this.resource = resource;
-    }
-
-    public String getProtocolVersion() {
-        return protocolVersion;
     }
 
     public void setProtocolVersion(String protocolVersion) {

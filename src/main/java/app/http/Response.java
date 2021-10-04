@@ -1,24 +1,26 @@
-package app.responses;
+package app.http;
 
-import app.Writable;
-
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Response implements Writable {
+public class Response {
+    private final InputStream requestedResourceInputStream;
     private final String protocolVersion;
     private final int statusCode;
     private final String statusMessage;
+    private final boolean isSuccess;
     private static final Map<String, List<String>> headers = new HashMap<>();
 
-    public Response(String protocolVersion, int statusCode, String statusMessage) {
+    public Response(String protocolVersion, int statusCode, String statusMessage, InputStream requestedResourceInputStream, boolean isSuccess) {
         this.protocolVersion = protocolVersion;
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
+        this.requestedResourceInputStream = requestedResourceInputStream;
+        this.isSuccess = isSuccess;
+        buildHeaders();
     }
 
     public void setHeader(String key, String value) {
@@ -27,23 +29,15 @@ public class Response implements Writable {
         headers.put(key, valueList);
     }
 
-    public void addHeader(String key, String value) {
-        List<String> valueList = headers.get(key);
-        valueList.add(value);
-        headers.put(key, valueList);
+    public InputStream getRequestedResourceInputStream() {
+        return requestedResourceInputStream;
     }
 
-    public String getHeader(String key) {
-        if (headers.containsKey(key))
-            return headers.get(key).get(0);
-        return null;
+    public boolean isSuccess() {
+        return isSuccess;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    private String getResponse() {
+    public String toString() {
         StringBuilder response = new StringBuilder();
         response.append(protocolVersion)
                 .append(" ")
@@ -54,19 +48,16 @@ public class Response implements Writable {
         for (var entry : headers.entrySet()) {
             response.append(entry.getKey())
                     .append(": ")
-                    .append(concatHeaderValues(entry.getValue()))
+                    .append(String.join(";", entry.getValue()))
                     .append("\r\n");
         }
         response.append("\r\n");
         return response.toString();
     }
 
-    private String concatHeaderValues(List<String> values) {
-        return String.join(";", values);
-    }
-
-    @Override
-    public void write(OutputStream outputStream) throws IOException {
-        outputStream.write(getResponse().getBytes());
+    private void buildHeaders() {
+        setHeader("app.Server", "VladServer/08.12.2021");
+        setHeader("Connection", "close");
+        setHeader("Allow", "GET");
     }
 }
