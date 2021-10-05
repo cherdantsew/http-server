@@ -12,7 +12,7 @@ public class Response {
     private final int statusCode;
     private final String statusMessage;
     private final boolean isSuccess;
-    private static final Map<String, List<String>> headers = new HashMap<>();
+    private final Map<String, List<String>> headers = new HashMap<>();
 
     public Response(String protocolVersion, int statusCode, String statusMessage, InputStream requestedResourceInputStream, boolean isSuccess) {
         this.protocolVersion = protocolVersion;
@@ -33,7 +33,7 @@ public class Response {
         return requestedResourceInputStream;
     }
 
-    public boolean isSuccess() {
+    public boolean isSuccessfull() {
         return isSuccess;
     }
 

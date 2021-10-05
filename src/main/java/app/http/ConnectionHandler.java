@@ -36,8 +36,8 @@ public class ConnectionHandler implements Runnable {
             if (request == null) {
                 return;
             }
-            Response response = responseProvider.getResponse(new File(request.getResource()), bufferSize);
-            ResponseWriter.writeResponse(response, outputStream);
+            Response response = responseProvider.getResponse(new File(request.getResource()));
+            ResponseWriter.writeResponse(response, outputStream, bufferSize);
             logger.log(Level.INFO, "Client processing finished.");
         } catch (IOException e) {
             logger.log(Level.WARNING, "Error occurred while trying to write response/getting response object.", e);

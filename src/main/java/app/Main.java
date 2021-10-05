@@ -21,6 +21,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             initServer(args).start();
+            LOGGER.log(Level.INFO, "Server stopped");
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "error while server init", e);
         }
@@ -31,6 +32,6 @@ public class Main {
         int port = Optional.ofNullable(props.getProperty(PORT)).map(Integer::parseInt).orElse(DEFAULT_PORT_NUMBER);
         String pathToResource = Optional.ofNullable(props.getProperty(RESOURCES_PATH)).orElse(DEFAULT_RESOURCES_PATH);
         Integer bufferSize = Optional.ofNullable(props.getProperty(BUFFER_SIZE)).map(Integer::parseInt).orElse(DEFAULT_BUFFER_SIZE);
-        return new Server(port, pathToResource, DEFAULT_BUFFER_SIZE, new RequestReader(), new ResponseProvider());
+        return new Server(port, pathToResource, bufferSize, new RequestReader(), new ResponseProvider());
     }
 }
