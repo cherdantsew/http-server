@@ -1,4 +1,4 @@
-package app.http;
+package app.http.request;
 
 import java.util.ArrayList;
 import java.util.HashMap;

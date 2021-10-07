@@ -1,4 +1,4 @@
-package app.http;
+package app.http.response;
 
 public class HttpErrorResponse {
     public static final String RM_404_HTML_TEXT = "<!DOCTYPE html>\n" +

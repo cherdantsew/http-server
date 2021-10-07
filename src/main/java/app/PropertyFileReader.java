@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyFileReader {
-
     private static final String DEFAULT_CONFIG_FILE_NAME = "config.properties";
 
     public static Properties getProps(String[] args) throws IOException {

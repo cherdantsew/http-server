@@ -1,4 +1,4 @@
-package app.http;
+package app.http.response;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -7,19 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 public class Response {
-    private final InputStream requestedResourceInputStream;
+    private final InputStream inputStream;
     private final String protocolVersion;
     private final int statusCode;
     private final String statusMessage;
-    private final boolean isSuccess;
     private final Map<String, List<String>> headers = new HashMap<>();
 
-    public Response(String protocolVersion, int statusCode, String statusMessage, InputStream requestedResourceInputStream, boolean isSuccess) {
+    public Response(String protocolVersion, int statusCode, String statusMessage, InputStream inputStream) {
         this.protocolVersion = protocolVersion;
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
-        this.requestedResourceInputStream = requestedResourceInputStream;
-        this.isSuccess = isSuccess;
+        this.inputStream = inputStream;
         buildHeaders();
     }
 
@@ -29,12 +27,8 @@ public class Response {
         headers.put(key, valueList);
     }
 
-    public InputStream getRequestedResourceInputStream() {
-        return requestedResourceInputStream;
-    }
-
-    public boolean isSuccessfull() {
-        return isSuccess;
+    public InputStream getInputStream() {
+        return inputStream;
     }
 
     public String toString() {

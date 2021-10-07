@@ -1,5 +1,8 @@
-package app.http;
+package app.http.response;
 
+import app.http.HTTPUtils;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,11 +13,11 @@ public class ResponseProvider {
     public Response getResponse(File file) throws FileNotFoundException {
         Response response;
         if (file.isFile()) {
-            response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_OK, HTTPUtils.RM_OK, new FileInputStream(file), true);
+            response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_OK, HTTPUtils.RM_OK, new FileInputStream(file));
             addSuccessHeaders(file, response);
             return response;
-        }//TODO это норм передавать нулл?нужен 2й конструктор?
-        response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_NOT_FOUND, HTTPUtils.RM_FILE_NOT_FOUND, null, false);
+        }
+        response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_NOT_FOUND, HTTPUtils.RM_FILE_NOT_FOUND, new ByteArrayInputStream(HttpErrorResponse.RM_404_HTML_TEXT.getBytes()));
         addErrorHeaders(response);
         return response;
     }
