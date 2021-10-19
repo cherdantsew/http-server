@@ -1,13 +1,15 @@
 package app;
 
-import app.http.*;
+import app.http.ConnectionHandler;
+import app.http.ServerProperties;
 import app.http.request.RequestReader;
 import app.http.response.ResponseProvider;
 import app.http.response.ResponseWriter;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +19,8 @@ public class Server {
     private final RequestReader requestReader;
     private final ResponseWriter responseWriter;
     private final ResponseProvider responseProvider;
+    private final AtomicInteger atomicInteger = new AtomicInteger(0);
+    private final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(100);
 
     public Server(ServerProperties serverProperties, RequestReader requestReader, ResponseWriter responseWriter, ResponseProvider responseProvider) {
         this.serverProperties = serverProperties;
@@ -26,14 +30,15 @@ public class Server {
     }
 
     public void start() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(serverProperties.getPort());
+        ServerSocket serverSocket = new ServerSocket(serverProperties.getPort(), 100);
         LOGGER.log(Level.INFO, "Server started.");
+        Executor executorService = new CountingTimeThreadPoolExecutor(new ThreadPoolExecutor(20, 30, 0L, TimeUnit.MILLISECONDS, queue));
         while (true) {
-            Socket clientSocket = serverSocket.accept();
+            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties);
             LOGGER.log(Level.INFO, "Client accepted.");
-            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, clientSocket, responseProvider, serverProperties);
-            new Thread(connectionHandler).start();
+            System.out.println("Total accepted clients " + atomicInteger.incrementAndGet());
+            executorService.execute(connectionHandler);
+            System.out.println("The queue size: " + queue.size());
         }
     }
 }
-
