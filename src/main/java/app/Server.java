@@ -31,10 +31,11 @@ public class Server {
 
     public void start() throws IOException {
         ServerSocket serverSocket = new ServerSocket(serverProperties.getPort(), BACKLOG);
+        ServerCache serverCache = new ServerCache(serverProperties.getCacheSize());
         LOGGER.log(Level.INFO, "Server started.");
         Executor executorService = Executors.newFixedThreadPool(20);
         while (true) {
-            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties);
+            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties, serverCache);
             LOGGER.log(Level.INFO, "Client accepted.");
             System.out.println("Total accepted clients " + atomicInteger.incrementAndGet());
             executorService.execute(connectionHandler);

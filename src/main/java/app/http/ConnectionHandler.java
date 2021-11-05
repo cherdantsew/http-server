@@ -1,5 +1,6 @@
 package app.http;
 
+import app.ServerCache;
 import app.http.request.Request;
 import app.http.request.RequestReader;
 import app.http.response.Response;
@@ -23,9 +24,10 @@ public class ConnectionHandler implements Runnable {
     private final InputStream inputStream;
     private final OutputStream outputStream;
     private final ServerProperties serverProperties;
+    private final ServerCache serverCache;
     private static final Logger LOGGER = Logger.getLogger(ConnectionHandler.class.getName());
 
-    public ConnectionHandler(RequestReader requestReader, ResponseWriter responseWriter, Socket socket, ResponseProvider responseProvider, ServerProperties serverProperties) throws IOException {
+    public ConnectionHandler(RequestReader requestReader, ResponseWriter responseWriter, Socket socket, ResponseProvider responseProvider, ServerProperties serverProperties, ServerCache serverCache) throws IOException {
         this.requestReader = requestReader;
         this.responseWriter = responseWriter;
         this.socket = socket;
@@ -33,6 +35,7 @@ public class ConnectionHandler implements Runnable {
         this.outputStream = socket.getOutputStream();
         this.responseProvider = responseProvider;
         this.serverProperties = serverProperties;
+        this.serverCache = serverCache;
     }
 
     @Override
@@ -42,8 +45,9 @@ public class ConnectionHandler implements Runnable {
             if (request == null) {
                 return;
             }
+            serverCache.put(request.getResource());
             Response response = responseProvider.getResponse(new File(request.getResource()));
-            responseWriter.writeResponse(response, outputStream, serverProperties.getBufferSize());
+            responseWriter.writeResponse(response, outputStream, serverProperties.getBufferSize(), serverCache);
             LOGGER.log(Level.INFO, "Client processing finished.");
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Error occurred while trying to write response/getting response object.", e);

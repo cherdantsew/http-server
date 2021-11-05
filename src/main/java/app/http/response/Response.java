@@ -1,23 +1,26 @@
 package app.http.response;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Response {
-    private final InputStream inputStream;
+    //private final InputStream inputStream;
     private final String protocolVersion;
     private final int statusCode;
     private final String statusMessage;
+    private final String fileName;
     private final Map<String, List<String>> headers = new HashMap<>();
+    //private final boolean isCached;
 
-    public Response(String protocolVersion, int statusCode, String statusMessage, InputStream inputStream) {
+    public Response(String protocolVersion, int statusCode, String statusMessage, String fileName) {
         this.protocolVersion = protocolVersion;
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
-        this.inputStream = inputStream;
+        //this.inputStream = inputStream;
+        //this.isCached = isCached;
+        this.fileName = fileName;
         buildHeaders();
     }
 
@@ -27,9 +30,22 @@ public class Response {
         headers.put(key, valueList);
     }
 
-    public InputStream getInputStream() {
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+        /*public InputStream getInputStream() {
         return inputStream;
     }
+
+    public boolean isCached() {
+        return isCached;
+    }
+*/
 
     public String toString() {
         StringBuilder response = new StringBuilder();

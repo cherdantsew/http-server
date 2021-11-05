@@ -2,9 +2,7 @@ package app.http.response;
 
 import app.http.HTTPUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URLConnection;
 
@@ -13,11 +11,11 @@ public class ResponseProvider {
     public Response getResponse(File file) throws FileNotFoundException {
         Response response;
         if (file.isFile()) {
-            response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_OK, HTTPUtils.RM_OK, new FileInputStream(file));
+            response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_OK, HTTPUtils.RM_OK, file.getAbsolutePath());
             addSuccessHeaders(file, response);
             return response;
         }
-        response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_NOT_FOUND, HTTPUtils.RM_FILE_NOT_FOUND, new ByteArrayInputStream(HttpErrorResponse.RM_404_HTML_TEXT.getBytes()));
+        response = new Response(HTTPUtils.HTTP_1_1_PROTOCOL, HTTPUtils.RC_NOT_FOUND, HTTPUtils.RM_FILE_NOT_FOUND, null);
         addErrorHeaders(response);
         return response;
     }
