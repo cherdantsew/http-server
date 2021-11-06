@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,9 +26,10 @@ public class ConnectionHandler implements Runnable {
     private final OutputStream outputStream;
     private final ServerProperties serverProperties;
     private final ServerCache serverCache;
+    private final ConcurrentMap<String, Session> sessions;
     private static final Logger LOGGER = Logger.getLogger(ConnectionHandler.class.getName());
 
-    public ConnectionHandler(RequestReader requestReader, ResponseWriter responseWriter, Socket socket, ResponseProvider responseProvider, ServerProperties serverProperties, ServerCache serverCache) throws IOException {
+    public ConnectionHandler(RequestReader requestReader, ResponseWriter responseWriter, Socket socket, ResponseProvider responseProvider, ServerProperties serverProperties, ServerCache serverCache, ConcurrentMap<String, Session> sessions) throws IOException {
         this.requestReader = requestReader;
         this.responseWriter = responseWriter;
         this.socket = socket;
@@ -36,6 +38,7 @@ public class ConnectionHandler implements Runnable {
         this.responseProvider = responseProvider;
         this.serverProperties = serverProperties;
         this.serverCache = serverCache;
+        this.sessions = sessions;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ConnectionHandler implements Runnable {
                 return;
             }
             serverCache.put(request.getResource());
-            Response response = responseProvider.getResponse(new File(request.getResource()));
+            Response response = responseProvider.getResponse(request, new File(request.getResource()), sessions);
             responseWriter.writeResponse(response, outputStream, serverProperties.getBufferSize(), serverCache);
             LOGGER.log(Level.INFO, "Client processing finished.");
         } catch (IOException e) {

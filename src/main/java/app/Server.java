@@ -2,13 +2,17 @@ package app;
 
 import app.http.ConnectionHandler;
 import app.http.ServerProperties;
+import app.http.Session;
 import app.http.request.RequestReader;
 import app.http.response.ResponseProvider;
 import app.http.response.ResponseWriter;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +25,7 @@ public class Server {
     private final ResponseWriter responseWriter;
     private final ResponseProvider responseProvider;
     private final AtomicInteger atomicInteger = new AtomicInteger(0);
+    private final ConcurrentMap<String, Session> sessions = new ConcurrentHashMap<>();
 
     public Server(ServerProperties serverProperties, RequestReader requestReader, ResponseWriter responseWriter, ResponseProvider responseProvider) {
         this.serverProperties = serverProperties;
@@ -32,10 +37,10 @@ public class Server {
     public void start() throws IOException {
         ServerSocket serverSocket = new ServerSocket(serverProperties.getPort(), BACKLOG);
         ServerCache serverCache = new ServerCache(serverProperties.getCacheSize());
-        LOGGER.log(Level.INFO, "Server started.");
         Executor executorService = Executors.newFixedThreadPool(20);
+        LOGGER.log(Level.INFO, "Server started.");
         while (true) {
-            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties, serverCache);
+            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties, serverCache, sessions);
             LOGGER.log(Level.INFO, "Client accepted.");
             System.out.println("Total accepted clients " + atomicInteger.incrementAndGet());
             executorService.execute(connectionHandler);

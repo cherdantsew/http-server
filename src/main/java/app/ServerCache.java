@@ -7,9 +7,6 @@ import java.nio.file.Path;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-//TODO Lock.lock // concurrentHashMap
-//cookies  -> Session(UUID, session creation time, last request time
-//разница между кукой и хедером (присылать куку с айдишником и хедер когда его сессия была создана)
 public class ServerCache {
     private final long maxCacheSize;
     private long currentCacheSize = 0;

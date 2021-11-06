@@ -55,7 +55,7 @@ public class RequestReader {
             if (headerLine.split(":", 2).length > 1) {
                 String headerValues = headerLine.split(":", 2)[HEADER_VALUE_INDEX];
                 for (String headerValue : headerValues.split(";")) {
-                    request.setHeader(headerName, headerValue);
+                    request.setHeader(headerName, headerValue.replaceAll("\\s+", ""));
                 }
             }
         }
