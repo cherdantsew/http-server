@@ -9,6 +9,7 @@ import app.http.response.ResponseWriter;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -38,9 +39,10 @@ public class Server {
         ServerSocket serverSocket = new ServerSocket(serverProperties.getPort(), BACKLOG);
         ServerCache serverCache = new ServerCache(serverProperties.getCacheSize());
         Executor executorService = Executors.newFixedThreadPool(20);
+        Timer timer = new Timer();
         LOGGER.log(Level.INFO, "Server started.");
         while (true) {
-            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties, serverCache, sessions);
+            ConnectionHandler connectionHandler = new ConnectionHandler(requestReader, responseWriter, serverSocket.accept(), responseProvider, serverProperties, serverCache, sessions, timer);
             LOGGER.log(Level.INFO, "Client accepted.");
             System.out.println("Total accepted clients " + atomicInteger.incrementAndGet());
             executorService.execute(connectionHandler);

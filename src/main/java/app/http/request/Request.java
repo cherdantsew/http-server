@@ -1,5 +1,7 @@
 package app.http.request;
 
+import app.http.Session;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ public class Request {
     private String resource;
     private String protocolVersion;
     private final Map<String, List<String>> headers = new HashMap<>();
+    private Session session;
 
     public void setHeader(String key, String value) {
         if (this.headers.containsKey(key)) {
@@ -29,6 +32,14 @@ public class Request {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     public String getResource() {

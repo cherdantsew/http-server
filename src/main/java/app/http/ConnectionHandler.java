@@ -7,11 +7,11 @@ import app.http.response.Response;
 import app.http.response.ResponseProvider;
 import app.http.response.ResponseWriter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,8 +28,9 @@ public class ConnectionHandler implements Runnable {
     private final ServerCache serverCache;
     private final ConcurrentMap<String, Session> sessions;
     private static final Logger LOGGER = Logger.getLogger(ConnectionHandler.class.getName());
+    private final Timer timer;
 
-    public ConnectionHandler(RequestReader requestReader, ResponseWriter responseWriter, Socket socket, ResponseProvider responseProvider, ServerProperties serverProperties, ServerCache serverCache, ConcurrentMap<String, Session> sessions) throws IOException {
+    public ConnectionHandler(RequestReader requestReader, ResponseWriter responseWriter, Socket socket, ResponseProvider responseProvider, ServerProperties serverProperties, ServerCache serverCache, ConcurrentMap<String, Session> sessions, Timer timer) throws IOException {
         this.requestReader = requestReader;
         this.responseWriter = responseWriter;
         this.socket = socket;
@@ -39,17 +40,18 @@ public class ConnectionHandler implements Runnable {
         this.serverProperties = serverProperties;
         this.serverCache = serverCache;
         this.sessions = sessions;
+        this.timer = timer;
     }
 
     @Override
     public void run() {
         try (socket) {
-            Request request = requestReader.readRequest(inputStream, serverProperties.getPathToResources());
+            Request request = requestReader.readRequest(inputStream, serverProperties.getPathToResources(), sessions, timer);
             if (request == null) {
                 return;
             }
             serverCache.put(request.getResource());
-            Response response = responseProvider.getResponse(request, new File(request.getResource()), sessions);
+            Response response = responseProvider.getResponse(request);
             responseWriter.writeResponse(response, outputStream, serverProperties.getBufferSize(), serverCache);
             LOGGER.log(Level.INFO, "Client processing finished.");
         } catch (IOException e) {

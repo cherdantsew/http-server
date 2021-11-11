@@ -10,7 +10,7 @@ public class Response {
     private final String protocolVersion;
     private final int statusCode;
     private final String statusMessage;
-    private final String fileName;
+    private final String filePath;
     private final Map<String, List<String>> headers = new HashMap<>();
     //private final boolean isCached;
 
@@ -20,7 +20,7 @@ public class Response {
         this.statusMessage = statusMessage;
         //this.inputStream = inputStream;
         //this.isCached = isCached;
-        this.fileName = fileName;
+        this.filePath = fileName;
         buildHeaders();
     }
 
@@ -34,8 +34,8 @@ public class Response {
         return statusCode;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilePath() {
+        return filePath;
     }
 
         /*public InputStream getInputStream() {
