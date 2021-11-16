@@ -17,7 +17,6 @@ public class Session extends TimerTask {
 
     @Override
     public void run() {
-        System.out.println("Timer entered method RUN");
         if ((System.currentTimeMillis() - lastRequestTime) > 10000 && isValid) {
             isValid = false;
             System.out.println("Made session UUID = " + uuid + " invalid.");

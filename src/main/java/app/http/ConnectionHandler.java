@@ -1,11 +1,12 @@
 package app.http;
 
-import app.ServerCache;
+import app.server.ServerCache;
 import app.http.request.Request;
 import app.http.request.RequestReader;
 import app.http.response.Response;
 import app.http.response.ResponseProvider;
 import app.http.response.ResponseWriter;
+import app.server.ServerProperties;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +47,7 @@ public class ConnectionHandler implements Runnable {
     @Override
     public void run() {
         try (socket) {
-            Request request = requestReader.readRequest(inputStream, serverProperties.getPathToResources(), sessions, timer);
+            Request request = requestReader.readRequest(inputStream, serverProperties, sessions, timer);
             if (request == null) {
                 return;
             }

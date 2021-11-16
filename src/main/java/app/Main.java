@@ -3,7 +3,8 @@ package app;
 import app.http.request.RequestReader;
 import app.http.response.ResponseProvider;
 import app.http.response.ResponseWriter;
-import app.http.ServerProperties;
+import app.server.ServerProperties;
+import app.server.Server;
 
 import java.io.IOException;
 import java.util.Properties;

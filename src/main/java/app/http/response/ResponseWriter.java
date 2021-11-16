@@ -1,6 +1,6 @@
 package app.http.response;
 
-import app.ServerCache;
+import app.server.ServerCache;
 import app.http.HTTPUtils;
 
 import java.io.*;

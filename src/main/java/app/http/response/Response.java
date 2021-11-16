@@ -66,7 +66,7 @@ public class Response {
     }
 
     private void buildHeaders() {
-        setHeader("app.Server", "VladServer/08.12.2021");
+        setHeader("app.server.Server", "VladServer/08.12.2021");
         setHeader("Connection", "close");
         setHeader("Allow", "GET");
     }

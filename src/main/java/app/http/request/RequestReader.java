@@ -1,6 +1,7 @@
 package app.http.request;
 
 import app.http.Session;
+import app.server.ServerProperties;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class RequestReader {
     private static final int SESSION_TIMER_DELAY = 1000;
     private static final int SESSION_TIMER_PERIOD = 1000;
 
-    public Request readRequest(InputStream inputStream, String pathToResources, ConcurrentMap<String, Session> sessions, Timer timer) {
+    public Request readRequest(InputStream inputStream, ServerProperties serverProperties, ConcurrentMap<String, Session> sessions, Timer timer) {
         try {
             Request request = new Request();
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
@@ -35,9 +36,10 @@ public class RequestReader {
             String firstLine = requestLines.get(STATUS_LINE_INDEX);
             request.setMethod(getMethod(firstLine));
             request.setProtocolVersion(getProtocolVersion(firstLine));
-            request.setResource(getResource(pathToResources, firstLine));
+            request.setResource(getResource(serverProperties.getPathToResources(), firstLine));
             formRequestHeaders(requestLines, request);
-            request.setSession(getSession(request, sessions, timer));
+            if (serverProperties.getEnabledSessions())
+                request.setSession(getSession(request, sessions, timer));
             return request;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error while reading request from input stream.", e);
@@ -58,7 +60,10 @@ public class RequestReader {
             if (session.isValid()) {
                 session.update();
                 return session;
-            } else return null;
+            } else {
+                sessions.remove(UUID);
+                return null;
+            }
         }
         return null;
     }

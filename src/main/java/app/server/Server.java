@@ -1,7 +1,6 @@
-package app;
+package app.server;
 
 import app.http.ConnectionHandler;
-import app.http.ServerProperties;
 import app.http.Session;
 import app.http.request.RequestReader;
 import app.http.response.ResponseProvider;
